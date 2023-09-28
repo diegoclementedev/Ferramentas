@@ -11,24 +11,64 @@ Conflitos de Simultaneidade:
 
 */
 
-using (var setupContext = new PersonContext())
+using (var setupContext = new DemonstracaoContext())
 {
     setupContext.Database.EnsureDeleted();
     setupContext.Database.EnsureCreated();
 
-    setupContext.People.Add(new Person { FirstName = "John", LastName = "Doe" });
-    setupContext.People.Add(new Person { FirstName = "Marie", LastName = "Jane" });
+    setupContext.Produtos.Add(new Produto { Nome = "Mouse", Preco = 10 });
+    setupContext.Produtos.Add(new Produto { Nome = "Teclado", Preco = 15 });
 
     setupContext.SaveChanges();
 }
 
+#region Cenário Sem Concorrência
+
 try
 {
-    SuccessfulUpdate();
-    ConcurrencyFailure();
+    using var context = new DemonstracaoContext();
+
+    var produto = context.Produtos.Single(b => b.Nome == "Mouse");
+    produto.Nome = "Fone";
+    context.SaveChanges();
+
+    Console.WriteLine("Alteração completada com sucesso.");
+}
+catch (Exception exception)
+{
+    Console.WriteLine(exception);
+    throw;
+}
+
+#endregion
+
+
+#region Cenário Com Concorrência
+
+try
+{
+    using var context = new DemonstracaoContext();
+
+    var produto1 = context.Produtos.Single(b => b.Nome == "Fone");
+    produto1.Nome = "Câmera";
+
+    var produto2 = context.Produtos.Single(b => b.Nome == "Teclado");
+    produto2.Nome = "Microfone";
+
+    //Simulando a concorrência
+    using (var context2 = new DemonstracaoContext())
+    {
+        var produto3 = context2.Produtos.Single(b => b.Nome == "Fone");
+        produto3.Nome = "Monitor";
+        context2.SaveChanges();
+    }
+
+    Console.WriteLine("Ao tentar salvar será lançada uma exceção do tipo DbUpdateConcurrencyException");
+    context.SaveChanges();
 }
 catch (DbUpdateConcurrencyException bbUpdateConcurrencyException)
 {
+    //Trate o conflito aqui
     Console.WriteLine(bbUpdateConcurrencyException);
     throw;
 }
@@ -38,64 +78,28 @@ catch (Exception exception)
     throw;
 }
 
+#endregion
 
-
-// Sem concorrência
-static void SuccessfulUpdate()
-{
-    using var context = new PersonContext();
-
-    var person = context.People.Single(b => b.FirstName == "John");
-    person.FirstName = "Paul";
-    context.SaveChanges();
-
-    Console.WriteLine("The change completed successfully.");
-}
-
-// Com concorrência
-static void ConcurrencyFailure()
-{
-    using var context = new PersonContext();
-
-    var person = context.People.Single(b => b.FirstName == "Marie");
-    person.FirstName = "Stephanie";
-
-    var person1 = context.People.Single(b => b.FirstName == "Paul");
-    person1.FirstName = "Ronald";
-
-    //Simulando a concorrência
-    using (var context2 = new PersonContext())
-    {
-        var person2 = context2.People.Single(b => b.FirstName == "Marie");
-        person2.FirstName = "Rachel";
-        context2.SaveChanges();
-    }
-
-    Console.WriteLine("SaveChanges should now throw: DbUpdateConcurrencyException");
-    context.SaveChanges();
-}
 
 namespace ConcurrencyCheck
 {
-    public class PersonContext : DbContext
+public class DemonstracaoContext : DbContext
+{
+    public DbSet<Produto> Produtos { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        public DbSet<Person> People { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(
-                @"Server=(local); User Id=sa; Password=200521001gtiT; Database=EFSaving.Concurrency; TrustServerCertificate=true");
-        }
+        optionsBuilder.UseSqlServer(
+            @"Server=(local); User Id=[User]; Password=[Password]; Database=EFSaving.Concurrency; TrustServerCertificate=true");
     }
+}
 
-    public class Person
-    {
-        public int PersonId { get; set; }
-
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-
-        [ConcurrencyCheck] //Token de simultaneidade (Solução para Simultaneidade otimista)
-        public byte[] Version { get; set; }
-    }
+public class Produto
+{
+    public int Id { get; set; }
+    public string Nome { get; set; }
+    public decimal Preco { get; set; }
+    [ConcurrencyCheck] //Token de simultaneidade (Campo de controle de simultaneidade)
+    public byte[] Versao { get; set; }
+}
 }

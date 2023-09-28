@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeatureManager", "FeatureMa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConcurrencyCheck", "ConcurrencyCheck\ConcurrencyCheck.csproj", "{8A54552E-1132-4902-A650-88CF592AF588}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EncryptedColumnsEFCore", "EncryptedColumnsEFCore\EncryptedColumnsEFCore.csproj", "{CE6F554A-4FD0-4DA5-9A70-AC213B4283BC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{8A54552E-1132-4902-A650-88CF592AF588}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A54552E-1132-4902-A650-88CF592AF588}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A54552E-1132-4902-A650-88CF592AF588}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE6F554A-4FD0-4DA5-9A70-AC213B4283BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE6F554A-4FD0-4DA5-9A70-AC213B4283BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE6F554A-4FD0-4DA5-9A70-AC213B4283BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE6F554A-4FD0-4DA5-9A70-AC213B4283BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
