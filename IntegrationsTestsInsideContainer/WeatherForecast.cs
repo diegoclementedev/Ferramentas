@@ -1,4 +1,4 @@
-namespace IntegrationsTestsInsideContainer
+namespace IntegrationsTestsInsideContainerApi
 {
     public class WeatherForecast
     {
