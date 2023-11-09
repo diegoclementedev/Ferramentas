@@ -3,4 +3,5 @@ https://dotnet.testcontainers.org/
 
 https://www.milanjovanovic.tech/blog/testcontainers-integration-testing-using-docker-in-dotnet#implementing-a-custom-webapplicationfactory
 https://www.youtube.com/watch?v=tj5ZCtvgXKY
+https://www.youtube.com/watch?v=E4TeWBFzcCw
 https://code-maze.com/csharp-testing-using-testcontainers-for-net-and-docker/
